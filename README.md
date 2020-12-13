@@ -5,10 +5,10 @@ A new Flutter project based on [this prototype.](https://dribbble.com/shots/6581
 
 ### TODO:
 - [x] Add task page
-- [] Add state management
-- [] Add category, add task, check tasks, etc...
-    - [] Add IconPicker to select category icon (https://pub.dev/packages/flutter_iconpicker)
-- [] Add animations/transitions
+- [ ] Add state management
+- [ ] Add category, add task, check tasks, etc...
+    - [ ] Add IconPicker to select category icon (https://pub.dev/packages/flutter_iconpicker)
+- [ ] Add animations/transitions
 
 ## Getting Started
 
