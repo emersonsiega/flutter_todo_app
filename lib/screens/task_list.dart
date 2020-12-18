@@ -1,10 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_teste/config/routes.dart';
 import 'package:todo_app_teste/model/category.dart';
 import 'package:todo_app_teste/model/task.dart';
 import 'package:todo_app_teste/widgets/task_tile.dart';
+import 'package:todo_app_teste/widgets/add_task_fab.dart';
 
 class TaskList extends StatefulWidget {
+  final Category category;
+
+  const TaskList({
+    Key key,
+    this.category,
+  }) : super(key: key);
+
   @override
   _TaskListState createState() => _TaskListState();
 }
@@ -23,7 +30,6 @@ class _TaskListState extends State<TaskList> {
     DateTime.now().day,
   );
 
-  Category _category;
   List<Task> _withoutDate = [];
   List<Task> _late = [];
   List<Task> _today = [];
@@ -34,7 +40,11 @@ class _TaskListState extends State<TaskList> {
   void initState() {
     super.initState();
 
-    Future.delayed(Duration.zero, _loadArguments);
+    _withoutDate = _getWithoutDate(widget.category);
+    _late = _getLate(widget.category);
+    _today = _getToday(widget.category);
+    _next = _getNext(widget.category);
+    _done = _getDone(widget.category);
   }
 
   List<Task> _getWithoutDate(Category category) {
@@ -96,19 +106,6 @@ class _TaskListState extends State<TaskList> {
     return doneTasks;
   }
 
-  void _loadArguments() {
-    Category category = ModalRoute.of(context).settings.arguments;
-
-    setState(() {
-      _category = category;
-      _withoutDate = _getWithoutDate(category);
-      _late = _getLate(category);
-      _today = _getToday(category);
-      _next = _getNext(category);
-      _done = _getDone(category);
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -143,7 +140,7 @@ class _TaskListState extends State<TaskList> {
           ),
         ],
       ),
-      body: _category == null
+      body: widget.category == null
           ? Container()
           : Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -164,8 +161,8 @@ class _TaskListState extends State<TaskList> {
                           ),
                           child: Center(
                             child: Icon(
-                              _category.icon,
-                              color: _category.color,
+                              widget.category.icon,
+                              color: widget.category.color,
                               size: 35,
                             ),
                           ),
@@ -174,7 +171,7 @@ class _TaskListState extends State<TaskList> {
                       Padding(
                         padding: const EdgeInsets.only(top: 10.0),
                         child: Text(
-                          _category.text,
+                          widget.category.text,
                           style: Theme.of(context).textTheme.headline5.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.white,
@@ -184,7 +181,7 @@ class _TaskListState extends State<TaskList> {
                       Padding(
                         padding: const EdgeInsets.only(top: 4.0, bottom: 5.0),
                         child: Text(
-                          _category.taskCountText,
+                          widget.category.taskCountText,
                           style: Theme.of(context).textTheme.headline6.copyWith(
                                 fontWeight: FontWeight.w300,
                                 color: Colors.white70,
@@ -206,7 +203,7 @@ class _TaskListState extends State<TaskList> {
                     child: ListView(
                       padding: const EdgeInsets.fromLTRB(32, 12, 32, 50),
                       children: [
-                        if (_category.taskCount == 0)
+                        if (widget.category.taskCount == 0)
                           Center(
                             child: Text(
                               "all done 🙌",
@@ -235,19 +232,9 @@ class _TaskListState extends State<TaskList> {
                 ),
               ],
             ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _onAdd,
-        child: Icon(
-          Icons.add,
-        ),
+      floatingActionButton: AddTaskFAB(
+        category: widget.category.text != "All" ? widget.category : null,
       ),
-    );
-  }
-
-  void _onAdd() {
-    Navigator.of(context).pushNamed(
-      Routes.addTask,
-      arguments: _category.text != "All" ? _category : null,
     );
   }
 

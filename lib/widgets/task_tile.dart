@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_teste/model/task.dart';
 import 'package:intl/intl.dart';
+import 'package:todo_app_teste/model/task.dart';
 
 class TaskTile extends StatelessWidget {
   final Task task;
@@ -50,18 +50,24 @@ class TaskTile extends StatelessWidget {
                   )
               : Theme.of(context).textTheme.headline6,
         ),
-        subtitle: task.completeDate == null
-            ? Container()
-            : Text(
-                completeDate,
-                style: task.done
-                    ? Theme.of(context).textTheme.subtitle1.copyWith(
-                          color: Colors.grey[400],
-                        )
-                    : Theme.of(context).textTheme.subtitle1.copyWith(
-                          color: needAttention ? Colors.red : Colors.grey[700],
-                        ),
-              ),
+        subtitle: Builder(
+          builder: (_) {
+            if (task.completeDate == null) {
+              return Container();
+            }
+
+            return Text(
+              completeDate,
+              style: task.done
+                  ? Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: Colors.grey[400],
+                      )
+                  : Theme.of(context).textTheme.subtitle1.copyWith(
+                        color: needAttention ? Colors.red : Colors.grey[700],
+                      ),
+            );
+          },
+        ),
       ),
     );
   }

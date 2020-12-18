@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:todo_app_teste/config/routes.dart';
 import '../widgets/category_card.dart';
+import '../widgets/add_task_fab.dart';
 import '../model/category.dart';
 import '../model/task.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -8,25 +8,25 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 class Home extends StatelessWidget {
   static Task task1 = Task(
     text: "Estudar Flutter",
-    date: DateTime(2020, 12, 12),
+    date: DateTime(2020, 12, 17),
   );
   static Task task2 = Task(
     text: "Malhar",
-    date: DateTime(2020, 12, 13),
+    date: DateTime(2020, 12, 18),
     done: true,
   );
   static Task task3 = Task(
     text: "Correr 5k",
-    date: DateTime(2020, 12, 14),
-    time: DateTime(2020, 12, 14, 7),
+    date: DateTime(2020, 12, 19),
+    time: DateTime(2020, 12, 19, 7),
   );
   static Task task4 = Task(
     text: "Estudar Inglês",
   );
   static Task task5 = Task(
     text: "Reunião importante",
-    date: DateTime(2020, 12, 13),
-    time: DateTime(2020, 12, 13, 20),
+    date: DateTime(2020, 12, 18),
+    time: DateTime(2020, 12, 18, 20),
   );
 
   final categories = [
@@ -117,12 +117,6 @@ class Home extends StatelessWidget {
                   .map(
                     (category) => CategoryCard(
                       category: category,
-                      onTap: () {
-                        Navigator.of(context).pushNamed(
-                          Routes.tasks,
-                          arguments: category,
-                        );
-                      },
                     ),
                   )
                   .toList(),
@@ -130,17 +124,7 @@ class Home extends StatelessWidget {
           ),
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-        onPressed: () => _onAdd(context),
-      ),
+      floatingActionButton: AddTaskFAB(),
     );
-  }
-
-  void _onAdd(BuildContext context) {
-    Navigator.of(context).pushNamed(Routes.addTask);
   }
 }
