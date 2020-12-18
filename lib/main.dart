@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import './config/routes.dart';
+import './screens/home.dart';
 import './config/theme_builder.dart';
 import 'package:intl/intl.dart';
 
@@ -20,7 +20,7 @@ class MyApp extends StatelessWidget {
       title: 'Tasks',
       debugShowCheckedModeBanner: false,
       theme: ThemeBuilder.build(context),
-      routes: Routes.buildRoutes(),
+      home: Home(),
     );
   }
 }

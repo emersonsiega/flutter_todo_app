@@ -4,29 +4,16 @@ import '../widgets/task_info_tile.dart';
 import '../model/category.dart';
 
 class AddTask extends StatefulWidget {
+  final Category category;
+
+  const AddTask({Key key, this.category}) : super(key: key);
+
   @override
   _AddTaskState createState() => _AddTaskState();
 }
 
 class _AddTaskState extends State<AddTask> {
   final _forkKey = GlobalKey<FormState>();
-  Category _category;
-
-  @override
-  void initState() {
-    super.initState();
-    Future.delayed(Duration.zero, _getCategory);
-  }
-
-  void _getCategory() {
-    Category category = ModalRoute.of(context).settings.arguments;
-
-    if (category != null) {
-      setState(() {
-        _category = category;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -87,10 +74,12 @@ class _AddTaskState extends State<AddTask> {
                       icon: MdiIcons.noteOutline,
                     ),
                     TaskInfoTile(
-                      text: _category == null ? "Category" : _category.text,
+                      text: widget.category == null
+                          ? "Category"
+                          : widget.category.text,
                       onTap: () {},
                       icon: MdiIcons.tagOutline,
-                      selected: _category != null,
+                      selected: widget.category != null,
                     ),
                   ],
                 ),
