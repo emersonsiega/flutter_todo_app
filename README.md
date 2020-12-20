@@ -3,13 +3,6 @@
 A new Flutter project based on [this prototype.](https://dribbble.com/shots/6581661/attachments/6581661-To-Do-App-Task-manager-concept?mode=media)
 
 
-### TODO:
-- [x] Add task page
-- [ ] Add state management
-- [ ] Add category, add task, check tasks, etc...
-    - [ ] Add IconPicker to select category icon (https://pub.dev/packages/flutter_iconpicker)
-- [x] Add animations/transitions
-
 Animations tutorial:
     https://blog.logrocket.com/introducing-flutters-new-animations-package/
 
