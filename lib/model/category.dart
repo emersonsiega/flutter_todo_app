@@ -1,43 +1,115 @@
 import 'package:flutter/material.dart';
 import './task.dart';
 
-class Category {
-  int id;
-  String text;
-  Color color;
-  IconData icon;
-  List<Task> _tasks;
+import 'package:mobx/mobx.dart';
+part 'category.g.dart';
 
-  Category({
+class Category = _CategoryBase with _$Category;
+
+abstract class _CategoryBase with Store {
+  @observable
+  int id;
+  @observable
+  String text;
+  @observable
+  Color color;
+  @observable
+  IconData icon;
+  @observable
+  ObservableList<Task> tasks;
+
+  _CategoryBase({
     this.text,
     this.color,
     this.icon,
-    List<Task> tasks: const [],
-  })  : id = DateTime.now().millisecondsSinceEpoch,
-        _tasks = tasks;
+    this.tasks,
+  }) : id = DateTime.now().millisecondsSinceEpoch;
 
-  int get taskCount => _tasks.length;
+  final _baseDateHour = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+    DateTime.now().hour,
+    DateTime.now().minute,
+  );
+  final _baseDate = DateTime(
+    DateTime.now().year,
+    DateTime.now().month,
+    DateTime.now().day,
+  );
+
+  @computed
+  int get taskCount => tasks.length;
+
+  @computed
   String get taskCountText => "$taskCount Task${taskCount != 1 ? 's' : ''}";
 
-  List<Task> get tasks {
-    _tasks.sort(
-      (taskA, taskB) {
-        if (taskA.date == null && taskB.date == null) {
-          return 0;
+  @computed
+  List<Task> get getWithoutDate {
+    final withoutDateTasks = tasks
+        .where((task) => !task.done && task.date == null && task.time == null)
+        .toList();
+
+    return withoutDateTasks;
+  }
+
+  @computed
+  List<Task> get getLate {
+    final lateTasks = tasks.where(
+      (task) {
+        if (task.done || (task.date == null && task.time == null)) {
+          return false;
         }
 
-        if (taskA.date == null) {
-          return -1;
+        if (task.time == null) {
+          return task.date.isBefore(_baseDate);
         }
 
-        if (taskB.date == null) {
-          return 1;
-        }
-
-        return taskA.completeDate.compareTo(taskB.completeDate);
+        return task.completeDate.isBefore(_baseDateHour);
       },
-    );
+    ).toList();
 
-    return _tasks;
+    return lateTasks;
+  }
+
+  @computed
+  List<Task> get getToday {
+    final todayTasks = tasks.where(
+      (task) {
+        if (task.done || task.date == null) {
+          return false;
+        }
+
+        return task.date.compareTo(_baseDate) == 0;
+      },
+    ).toList();
+
+    return todayTasks;
+  }
+
+  @computed
+  List<Task> get getNext {
+    final nextTasks = tasks.where(
+      (task) {
+        if (task.done || task.date == null) {
+          return false;
+        }
+
+        return task.date.compareTo(_baseDate) > 0;
+      },
+    ).toList();
+
+    return nextTasks;
+  }
+
+  @computed
+  List<Task> get getDone {
+    final doneTasks = tasks.where((task) => task.done).toList();
+    return doneTasks;
+  }
+
+  @action
+  void setText(String text) {
+    this.text = text;
   }
 }

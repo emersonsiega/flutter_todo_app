@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:todo_app_teste/model/category.dart';
 import 'package:animations/animations.dart';
 import '../screens/task_list.dart';
@@ -28,40 +29,48 @@ class CategoryCard extends StatelessWidget {
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(10.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(
-                      category.icon,
-                      color: category.color,
-                      size: 40,
-                    ),
-                  ),
-                  Column(
+              child: Observer(
+                builder: (_) {
+                  return Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: <Widget>[
-                      Text(
-                        category.text,
-                        style: Theme.of(context).textTheme.headline5.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4.0),
-                        child: Text(
-                          "${category.taskCountText}",
-                          style: Theme.of(context).textTheme.headline6.copyWith(
-                                fontWeight: FontWeight.w300,
-                                color: Colors.grey,
-                              ),
+                      Align(
+                        alignment: Alignment.centerLeft,
+                        child: Icon(
+                          category.icon,
+                          color: category.color,
+                          size: 40,
                         ),
-                      )
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: <Widget>[
+                          Text(
+                            category.text,
+                            style:
+                                Theme.of(context).textTheme.headline5.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.only(top: 4.0),
+                            child: Text(
+                              "${category.taskCountText}",
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .headline6
+                                  .copyWith(
+                                    fontWeight: FontWeight.w300,
+                                    color: Colors.grey,
+                                  ),
+                            ),
+                          )
+                        ],
+                      ),
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
             ),
           ),

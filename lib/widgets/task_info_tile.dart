@@ -5,17 +5,22 @@ class TaskInfoTile extends StatelessWidget {
   final Function onTap;
   final IconData icon;
   final bool selected;
+  final bool isValid;
 
   TaskInfoTile({
     @required this.text,
     @required this.onTap,
     @required this.icon,
     this.selected: false,
+    this.isValid: true,
   });
 
   @override
   Widget build(BuildContext context) {
     Color _color = selected ? Colors.blue : Colors.grey;
+    if (!isValid) {
+      _color = Colors.redAccent;
+    }
 
     return InkWell(
       onTap: onTap,
@@ -29,11 +34,14 @@ class TaskInfoTile extends StatelessWidget {
               size: 30,
             ),
             SizedBox(width: 20),
-            Text(
-              text,
-              style: Theme.of(context).textTheme.headline6.copyWith(
-                    color: _color,
-                  ),
+            Expanded(
+              child: Text(
+                text,
+                style: Theme.of(context).textTheme.headline6.copyWith(
+                      color: _color,
+                    ),
+                maxLines: 3,
+              ),
             ),
           ],
         ),

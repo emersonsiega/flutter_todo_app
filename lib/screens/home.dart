@@ -1,87 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app_teste/controller/home_controller.dart';
 import '../widgets/category_card.dart';
 import '../widgets/add_task_fab.dart';
-import '../model/category.dart';
-import '../model/task.dart';
-import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class Home extends StatelessWidget {
-  static Task task1 = Task(
-    text: "Estudar Flutter",
-    date: DateTime(2020, 12, 17),
-  );
-  static Task task2 = Task(
-    text: "Malhar",
-    date: DateTime(2020, 12, 18),
-    done: true,
-  );
-  static Task task3 = Task(
-    text: "Correr 5k",
-    date: DateTime(2020, 12, 19),
-    time: DateTime(2020, 12, 19, 7),
-  );
-  static Task task4 = Task(
-    text: "Estudar Inglês",
-  );
-  static Task task5 = Task(
-    text: "Reunião importante",
-    date: DateTime(2020, 12, 18),
-    time: DateTime(2020, 12, 18, 20),
-  );
-
-  final categories = [
-    Category(
-      icon: MdiIcons.checkBoxMultipleOutline,
-      color: Colors.blue,
-      text: "All",
-      tasks: [
-        task1,
-        task2,
-        task3,
-        task4,
-        task5,
-      ],
-    ),
-    Category(
-      icon: MdiIcons.briefcaseOutline,
-      color: Colors.orange,
-      text: "Work",
-      tasks: [task5],
-    ),
-    Category(
-      icon: MdiIcons.headphones,
-      color: Colors.red[300],
-      text: "Music",
-      tasks: [],
-    ),
-    Category(
-      icon: MdiIcons.beach,
-      color: Colors.green,
-      text: "Travel",
-      tasks: [],
-    ),
-    Category(
-      icon: MdiIcons.bookOpenPageVariantOutline,
-      color: Colors.purple,
-      text: "Study",
-      tasks: [task1, task4],
-    ),
-    Category(
-      icon: MdiIcons.homeOutline,
-      color: Colors.amber,
-      text: "Home",
-      tasks: [],
-    ),
-    Category(
-      icon: MdiIcons.heartOutline,
-      color: Colors.red,
-      text: "Health",
-      tasks: [task2, task3],
-    ),
-  ];
-
   @override
   Widget build(BuildContext context) {
+    HomeController _controller = Provider.of<HomeController>(
+      context,
+      listen: false,
+    );
+
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
@@ -108,19 +39,46 @@ class Home extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: GridView.count(
-              padding: EdgeInsets.fromLTRB(12, 16, 12, 20),
-              crossAxisCount: 2,
-              crossAxisSpacing: 10,
-              mainAxisSpacing: 10,
-              children: categories
-                  .map(
-                    (category) => CategoryCard(
-                      category: category,
-                    ),
-                  )
-                  .toList(),
+            child: Observer(
+              builder: (_) {
+                return GridView.count(
+                  padding: EdgeInsets.fromLTRB(12, 16, 12, 20),
+                  crossAxisCount: 2,
+                  crossAxisSpacing: 10,
+                  mainAxisSpacing: 10,
+                  children: _controller.categories
+                      .map(
+                        (category) => CategoryCard(
+                          category: category,
+                        ),
+                      )
+                      .toList(),
+                );
+              },
             ),
+          ),
+          Observer(
+            builder: (_) {
+              if (_controller.categories.isEmpty) {
+                return Expanded(
+                  child: Column(
+                    children: [
+                      Center(
+                        child: Text(
+                          "Why don't you add some tasks? 🧐",
+                          textAlign: TextAlign.center,
+                          style: Theme.of(context).textTheme.headline5.copyWith(
+                                color: Colors.grey,
+                              ),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }
+
+              return Container();
+            },
           ),
         ],
       ),

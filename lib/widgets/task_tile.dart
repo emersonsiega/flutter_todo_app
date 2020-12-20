@@ -37,9 +37,7 @@ class TaskTile extends StatelessWidget {
       contentPadding: EdgeInsets.all(0),
       child: CheckboxListTile(
         value: task.done,
-        onChanged: (checked) {
-          // TODO implementar
-        },
+        onChanged: task.setDone,
         controlAffinity: ListTileControlAffinity.trailing,
         title: Text(
           task.text,
