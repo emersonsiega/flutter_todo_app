@@ -33,7 +33,7 @@ class _CategoryPickerState extends State<CategoryPicker> {
       _controller = Provider.of<HomeController>(context, listen: false);
 
       List<Category> categories =
-          _controller.categories.where((cat) => cat.text != "All").toList();
+          _controller.categories.where((cat) => !cat.isMock).toList();
       categories.sort((catA, catB) => catA.text.compareTo(catB.text));
 
       int initialIndex = 0;

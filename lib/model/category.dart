@@ -18,12 +18,15 @@ abstract class _CategoryBase with Store {
   IconData icon;
   @observable
   ObservableList<Task> tasks;
+  @observable
+  bool isMock;
 
   _CategoryBase({
     this.text,
     this.color,
     this.icon,
     this.tasks,
+    this.isMock: false,
   }) : id = DateTime.now().millisecondsSinceEpoch;
 
   final _baseDateHour = DateTime(

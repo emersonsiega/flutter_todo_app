@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:provider/provider.dart';
+import 'package:todo_app_teste/controller/home_controller.dart';
 import 'package:todo_app_teste/model/category.dart';
 import 'package:todo_app_teste/model/task.dart';
 import 'package:todo_app_teste/widgets/add_task_fab.dart';
@@ -18,9 +20,15 @@ class TaskList extends StatefulWidget {
 }
 
 class _TaskListState extends State<TaskList> {
+  HomeController _controller;
+
   @override
   void initState() {
     super.initState();
+
+    Future.delayed(Duration.zero, () {
+      _controller = Provider.of<HomeController>(context, listen: false);
+    });
   }
 
   @override
@@ -175,7 +183,7 @@ class _TaskListState extends State<TaskList> {
         },
       ),
       floatingActionButton: AddTaskFAB(
-        category: widget.category.text != "All" ? widget.category : null,
+        category: !widget.category.isMock ? widget.category : null,
       ),
     );
   }
@@ -275,18 +283,26 @@ class _TaskListState extends State<TaskList> {
           ),
         ),
       ...tasks
-          .map((task) => Opacity(
-                opacity: opacity,
-                child: TaskTile(
-                  task: task,
-                  needAttention: late,
-                ),
-              ))
+          .map(
+            (task) => Opacity(
+              opacity: opacity,
+              child: TaskTile(
+                task: task,
+                needAttention: late,
+                category: widget.category,
+                onRemove: _onRemoveTask,
+              ),
+            ),
+          )
           .toList(),
       if (tasks.length > 0 && title != null)
         Padding(
           padding: EdgeInsets.only(bottom: 10),
         ),
     ];
+  }
+
+  void _onRemoveTask(Task task) {
+    _controller.removeTask(task);
   }
 }

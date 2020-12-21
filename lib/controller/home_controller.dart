@@ -15,7 +15,7 @@ abstract class _HomeControllerBase with Store {
   @action
   void addTask({Category category, Task task}) {
     Category catAll = categories.firstWhere(
-      (cat) => cat.text == 'All',
+      (cat) => cat.isMock,
       orElse: () => null,
     );
 
@@ -24,6 +24,7 @@ abstract class _HomeControllerBase with Store {
         icon: MdiIcons.checkBoxMultipleOutline,
         color: Colors.blue,
         text: "All",
+        isMock: true,
         tasks: <Task>[].asObservable(),
       );
 
@@ -42,6 +43,24 @@ abstract class _HomeControllerBase with Store {
       category.tasks.add(task);
     }
 
+    task.category = category;
     catAll.tasks.add(task);
+  }
+
+  @action
+  void removeTask(Task task) {
+    categories = categories
+        .map((cat) {
+          if (cat.id == task.category.id || cat.isMock) {
+            cat.tasks = cat.tasks
+                .where((ts) => ts.id != task.id)
+                .toList()
+                .asObservable();
+          }
+
+          return cat;
+        })
+        .toList()
+        .asObservable();
   }
 }

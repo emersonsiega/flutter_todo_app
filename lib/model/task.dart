@@ -1,4 +1,5 @@
 import 'package:mobx/mobx.dart';
+import 'package:todo_app_teste/model/category.dart';
 part 'task.g.dart';
 
 class Task = _TaskBase with _$Task;
@@ -16,6 +17,8 @@ abstract class _TaskBase with Store {
   DateTime time;
   @observable
   String note;
+  @observable
+  Category category;
 
   _TaskBase({
     this.text: "",
@@ -23,6 +26,7 @@ abstract class _TaskBase with Store {
     this.date,
     this.time,
     this.note,
+    this.category,
   }) : id = DateTime.now().millisecondsSinceEpoch;
 
   @action
