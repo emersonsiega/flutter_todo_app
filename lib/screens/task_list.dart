@@ -31,30 +31,7 @@ class _TaskListState extends State<TaskList> {
       appBar: AppBar(
         brightness: Brightness.dark,
         actions: <Widget>[
-          PopupMenuButton(
-            offset: Offset(0, 45),
-            onSelected: (vl) {
-              //TODO ...
-            },
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text("Mark all done"),
-                      ),
-                      SizedBox(width: 10),
-                      Icon(
-                        Icons.check_box,
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                ),
-              ];
-            },
-          ),
+          _markAllDoneAction(),
         ],
       ),
       body: Builder(
@@ -176,6 +153,77 @@ class _TaskListState extends State<TaskList> {
       ),
       floatingActionButton: AddTaskFAB(
         category: widget.category.text != "All" ? widget.category : null,
+      ),
+    );
+  }
+
+  Widget _markAllDoneAction() {
+    return Observer(
+      builder: (BuildContext context) {
+        if (widget.category.taskCount > 0)
+          return PopupMenuButton(
+            offset: Offset(0, 45),
+            onSelected: (_) => _onCompleteAll(),
+            itemBuilder: (BuildContext context) {
+              return [
+                PopupMenuItem(
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        child: Text("Mark all done"),
+                      ),
+                      SizedBox(width: 10),
+                      Icon(
+                        Icons.check_box,
+                        color: Colors.blue,
+                      ),
+                    ],
+                  ),
+                  value: true,
+                ),
+              ];
+            },
+          );
+
+        return Container();
+      },
+    );
+  }
+
+  void _onCompleteAll() {
+    showDialog(
+      context: context,
+      child: AlertDialog(
+        title: Text(
+          "Are you sure?",
+          style: Theme.of(context).textTheme.headline6,
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Center(
+              child: Text("You really want to complete all tasks?"),
+            ),
+          ],
+        ),
+        actions: [
+          FlatButton(
+            child: Text(
+              "No, wait!",
+            ),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          RaisedButton(
+            child: Text("Yes"),
+            color: Colors.blue,
+            onPressed: () {
+              Navigator.of(context).pop();
+              widget.category.setAllDone();
+            },
+          )
+        ],
       ),
     );
   }
