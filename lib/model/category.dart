@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:mobx/mobx.dart';
+
 import './task.dart';
 
-import 'package:mobx/mobx.dart';
 part 'category.g.dart';
 
 class Category = _CategoryBase with _$Category;
@@ -39,7 +40,7 @@ abstract class _CategoryBase with Store {
   );
 
   @computed
-  int get taskCount => tasks.length;
+  int get taskCount => tasks.where((task) => !task.done).length;
 
   @computed
   String get taskCountText => "$taskCount Task${taskCount != 1 ? 's' : ''}";
