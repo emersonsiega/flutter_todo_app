@@ -46,6 +46,9 @@ abstract class _CategoryBase with Store {
   String get taskCountText => "$taskCount Task${taskCount != 1 ? 's' : ''}";
 
   @computed
+  String get taskSizeDescriptionText => "Task${taskCount != 1 ? 's' : ''}";
+
+  @computed
   List<Task> get getWithoutDate {
     final withoutDateTasks = tasks
         .where((task) => !task.done && task.date == null && task.time == null)
@@ -112,5 +115,14 @@ abstract class _CategoryBase with Store {
   @action
   void setText(String text) {
     this.text = text;
+  }
+
+  @action
+  void setAllDone() {
+    List<Task> doneTasks = tasks.map((task) {
+      task.setDone(true);
+      return task;
+    }).toList();
+    tasks = doneTasks.asObservable();
   }
 }

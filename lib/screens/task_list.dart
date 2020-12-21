@@ -81,13 +81,36 @@ class _TaskListState extends State<TaskList> {
                         ),
                         Padding(
                           padding: const EdgeInsets.only(top: 4.0, bottom: 5.0),
-                          child: Text(
-                            widget.category.taskCountText,
-                            style:
-                                Theme.of(context).textTheme.headline6.copyWith(
+                          child: Row(
+                            children: [
+                              AnimatedSwitcher(
+                                duration: Duration(milliseconds: 500),
+                                child: Align(
+                                  key: Key(widget.category.taskCountText),
+                                  alignment: Alignment.centerLeft,
+                                  child: Text(
+                                    "${widget.category.taskCount}",
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .headline6
+                                        .copyWith(
+                                          fontWeight: FontWeight.w300,
+                                          color: Colors.white70,
+                                        ),
+                                  ),
+                                ),
+                              ),
+                              Text(
+                                " ${widget.category.taskSizeDescriptionText}",
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headline6
+                                    .copyWith(
                                       fontWeight: FontWeight.w300,
                                       color: Colors.white70,
                                     ),
+                              ),
+                            ],
                           ),
                         )
                       ],
