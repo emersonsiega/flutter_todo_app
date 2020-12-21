@@ -48,14 +48,28 @@ class TaskTile extends StatelessWidget {
                   )
               : Theme.of(context).textTheme.headline6,
         ),
+        isThreeLine: task.note != null && task.completeDate != null,
         subtitle: Builder(
           builder: (_) {
-            if (task.completeDate == null) {
+            String text = "";
+            if (task.completeDate != null) {
+              text = completeDate;
+            }
+
+            if (task.note != null) {
+              if (text.isNotEmpty) {
+                text = "$text\n";
+              }
+
+              text = "$text${task.note}";
+            }
+
+            if (text.isEmpty) {
               return Container();
             }
 
             return Text(
-              completeDate,
+              text,
               style: task.done
                   ? Theme.of(context).textTheme.subtitle1.copyWith(
                         color: Colors.grey[400],

@@ -35,6 +35,11 @@ abstract class _TaskBase with Store {
     this.text = text;
   }
 
+  @action
+  void setNote(String note) {
+    this.note = note;
+  }
+
   @computed
   DateTime get completeDate {
     DateTime completeDate = date;

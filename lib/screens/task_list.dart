@@ -183,32 +183,34 @@ class _TaskListState extends State<TaskList> {
   Widget _markAllDoneAction() {
     return Observer(
       builder: (BuildContext context) {
-        if (widget.category.taskCount > 0)
-          return PopupMenuButton(
-            offset: Offset(0, 45),
-            onSelected: (_) => _onCompleteAll(),
-            itemBuilder: (BuildContext context) {
-              return [
-                PopupMenuItem(
-                  child: Row(
-                    children: <Widget>[
-                      Expanded(
-                        child: Text("Mark all done"),
+        return AnimatedSwitcher(
+          duration: Duration(milliseconds: 250),
+          child: (widget.category.taskCount > 0)
+              ? PopupMenuButton(
+                  offset: Offset(0, 45),
+                  onSelected: (_) => _onCompleteAll(),
+                  itemBuilder: (BuildContext context) {
+                    return [
+                      PopupMenuItem(
+                        child: Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text("Mark all done"),
+                            ),
+                            SizedBox(width: 10),
+                            Icon(
+                              Icons.check_box,
+                              color: Colors.blue,
+                            ),
+                          ],
+                        ),
+                        value: true,
                       ),
-                      SizedBox(width: 10),
-                      Icon(
-                        Icons.check_box,
-                        color: Colors.blue,
-                      ),
-                    ],
-                  ),
-                  value: true,
-                ),
-              ];
-            },
-          );
-
-        return Container();
+                    ];
+                  },
+                )
+              : Container(),
+        );
       },
     );
   }

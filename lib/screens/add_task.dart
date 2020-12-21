@@ -129,9 +129,11 @@ class _AddTaskState extends State<AddTask> {
                       ),
                     ),
                     TaskInfoTile(
-                      text: "Add note",
-                      onTap: () {},
+                      text: _task.note == null ? "Add note" : _task.note,
+                      onTap: _onAddNote,
                       icon: MdiIcons.noteOutline,
+                      selected: _task.note?.isNotEmpty == true,
+                      onRemove: _onRemoveNote,
                     ),
                     TaskInfoTile(
                       text: _category == null ? "Category" : _category.text,
@@ -162,6 +164,10 @@ class _AddTaskState extends State<AddTask> {
         ),
       ),
     );
+  }
+
+  void _removeFocus() {
+    FocusScope.of(context).requestFocus(FocusNode());
   }
 
   String _textValidator(String value) {
@@ -205,6 +211,12 @@ class _AddTaskState extends State<AddTask> {
   }
 
   void _onSelectCategory() {
+    _removeFocus();
+
+    if (_controller.categories.isEmpty && _category == null) {
+      return _onCreateCategory();
+    }
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -253,8 +265,13 @@ class _AddTaskState extends State<AddTask> {
   }
 
   void _onAddAlert() {
+    _removeFocus();
+
     final now = DateTime.now();
     final minimumDate = DateTime(now.year, now.month, now.day);
+    setState(() {
+      _task.date = now;
+    });
 
     showModalBottomSheet(
       context: context,
@@ -291,6 +308,8 @@ class _AddTaskState extends State<AddTask> {
   }
 
   void _onAddHour() {
+    _removeFocus();
+
     showModalBottomSheet(
       context: context,
       builder: (BuildContext context) {
@@ -315,5 +334,68 @@ class _AddTaskState extends State<AddTask> {
         );
       },
     );
+  }
+
+  void _onAddNote() {
+    _removeFocus();
+    final _textController = TextEditingController(text: _task.note);
+
+    showDialog(
+      context: context,
+      child: AlertDialog(
+        title: Text("Add note"),
+        content: Container(
+          width: MediaQuery.of(context).size.width,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              TextField(
+                decoration: InputDecoration(
+                  labelText: "Important notes",
+                  alignLabelWithHint: true,
+                ),
+                controller: _textController,
+                minLines: 1,
+                maxLines: 1,
+                maxLength: 30,
+              ),
+            ],
+          ),
+        ),
+        actions: [
+          FlatButton(
+            child: Text(
+              "Clear",
+            ),
+            onPressed: () {
+              setState(() {
+                _task.setNote(null);
+              });
+              Navigator.of(context).pop();
+            },
+          ),
+          RaisedButton(
+            child: Text("Add"),
+            color: Colors.blue,
+            onPressed: () {
+              if (_textController.text.isNotEmpty) {
+                setState(() {
+                  _task.setNote(_textController.text);
+                });
+              }
+
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  void _onRemoveNote() {
+    setState(() {
+      _task.setNote(null);
+    });
   }
 }

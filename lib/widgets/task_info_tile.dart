@@ -45,6 +45,7 @@ class TaskInfoTile extends StatelessWidget {
                       color: _color,
                     ),
                 maxLines: 3,
+                overflow: TextOverflow.ellipsis,
               ),
             ),
             IgnorePointer(
