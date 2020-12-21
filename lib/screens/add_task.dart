@@ -1,13 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:todo_app_teste/config/theme_builder.dart';
 import 'package:todo_app_teste/controller/home_controller.dart';
 import 'package:todo_app_teste/model/task.dart';
 import 'package:todo_app_teste/widgets/category_creation.dart';
 import 'package:todo_app_teste/widgets/category_picker.dart';
-import '../widgets/task_info_tile.dart';
+
 import '../model/category.dart';
+import '../widgets/task_info_tile.dart';
 
 class AddTask extends StatefulWidget {
   final Category category;
@@ -22,9 +25,10 @@ class _AddTaskState extends State<AddTask> {
   final _formKey = GlobalKey<FormState>();
 
   HomeController _controller;
-  Task task = Task();
+  Task _task = Task();
   Category _category;
   bool _isCategoryValid = true;
+  bool _isDateTimeValid = true;
 
   @override
   void initState() {
@@ -83,13 +87,46 @@ class _AddTaskState extends State<AddTask> {
                       textInputAction: TextInputAction.done,
                       minLines: 1,
                       maxLines: 3,
-                      onChanged: task.setText,
+                      onChanged: _task.setText,
                       validator: _textValidator,
                     ),
                     TaskInfoTile(
-                      text: "Add alert",
-                      onTap: () {},
+                      text: _task.date == null
+                          ? "Add alert"
+                          : DateFormat("d/MM/yyyy").format(_task.date),
+                      onTap: _onAddAlert,
+                      selected: _task.date != null,
                       icon: MdiIcons.bellRingOutline,
+                      isValid: _isDateTimeValid,
+                      onRemove: () {
+                        setState(() {
+                          _task.date = null;
+                          _task.time = null;
+                          _isDateTimeValid = true;
+                        });
+                      },
+                    ),
+                    AnimatedCrossFade(
+                      crossFadeState: _task.date == null
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(milliseconds: 200),
+                      firstChild: Container(),
+                      secondChild: TaskInfoTile(
+                        text: _task.time == null
+                            ? "Add hour"
+                            : DateFormat("HH:mm").format(_task.time),
+                        selected: _task.time != null,
+                        onTap: _onAddHour,
+                        icon: MdiIcons.clockOutline,
+                        isValid: _isDateTimeValid,
+                        onRemove: () {
+                          setState(() {
+                            _task.time = null;
+                            _isDateTimeValid = true;
+                          });
+                        },
+                      ),
                     ),
                     TaskInfoTile(
                       text: "Add note",
@@ -143,9 +180,26 @@ class _AddTaskState extends State<AddTask> {
     return _isCategoryValid;
   }
 
+  bool _validateDateTime() {
+    if (_task.date != null && _task.time != null) {
+      _isDateTimeValid = _task.completeDate.isAfter(DateTime.now());
+    } else if (_task.date != null) {
+      final now = DateTime.now();
+      final today = DateTime(now.year, now.month, now.day);
+
+      _isDateTimeValid = _task.date.compareTo(today) >= 0;
+    }
+
+    setState(() {});
+
+    return _isDateTimeValid;
+  }
+
   void _onCreateTask() {
-    if (_formKey.currentState.validate() & _validateCategory()) {
-      _controller.addTask(category: _category, task: task);
+    if (_formKey.currentState.validate() &
+        _validateCategory() &
+        _validateDateTime()) {
+      _controller.addTask(category: _category, task: _task);
       Navigator.of(context).pop();
     }
   }
@@ -193,6 +247,71 @@ class _AddTaskState extends State<AddTask> {
               ),
             );
           },
+        );
+      },
+    );
+  }
+
+  void _onAddAlert() {
+    final now = DateTime.now();
+    final minimumDate = DateTime(now.year, now.month, now.day);
+
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height / 3,
+          child: ThemeBuilder.cupertinoTheme(
+            context: context,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.date,
+              backgroundColor: Theme.of(context).primaryColor,
+              minimumDate: minimumDate,
+              initialDateTime: _task.date,
+              use24hFormat: true,
+              onDateTimeChanged: (DateTime value) {
+                setState(() {
+                  _task.date = value;
+                  _isDateTimeValid = true;
+                });
+              },
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  bool _isToday() {
+    final today = DateTime.now();
+
+    return _task.date.year == today.year &&
+        _task.date.month == today.month &&
+        _task.date.day == today.day;
+  }
+
+  void _onAddHour() {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return Container(
+          height: MediaQuery.of(context).size.height / 3,
+          child: ThemeBuilder.cupertinoTheme(
+            context: context,
+            child: CupertinoDatePicker(
+              mode: CupertinoDatePickerMode.time,
+              backgroundColor: Theme.of(context).primaryColor,
+              minimumDate: _isToday() ? DateTime.now() : null,
+              initialDateTime: _task.time,
+              use24hFormat: true,
+              onDateTimeChanged: (DateTime value) {
+                setState(() {
+                  _task.time = value;
+                  _isDateTimeValid = true;
+                });
+              },
+            ),
+          ),
         );
       },
     );
