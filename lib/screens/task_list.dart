@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:todo_app_teste/model/category.dart';
 import 'package:todo_app_teste/model/task.dart';
-import 'package:todo_app_teste/widgets/task_tile.dart';
 import 'package:todo_app_teste/widgets/add_task_fab.dart';
+import 'package:todo_app_teste/widgets/task_tile.dart';
 
 class TaskList extends StatefulWidget {
   final Category category;
@@ -133,13 +133,16 @@ class _TaskListState extends State<TaskList> {
                         padding: const EdgeInsets.fromLTRB(32, 12, 32, 50),
                         children: [
                           if (widget.category.taskCount == 0)
-                            Center(
-                              child: Text(
-                                "all done 🙌",
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .headline6
-                                    .copyWith(color: Colors.grey),
+                            Padding(
+                              padding: EdgeInsets.symmetric(vertical: 30),
+                              child: Center(
+                                child: Text(
+                                  "All done 🙌",
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .headline6
+                                      .copyWith(color: Colors.grey),
+                                ),
                               ),
                             ),
                           ..._buildListWithTitle(
